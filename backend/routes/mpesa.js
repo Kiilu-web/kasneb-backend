@@ -22,8 +22,8 @@ const MPESA_CONFIG = {
   businessShortCode: process.env.MPESA_BUSINESS_SHORT_CODE || '174379',
   passkey: process.env.MPESA_PASSKEY || 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919',
   environment: process.env.MPESA_ENVIRONMENT || 'sandbox',
-  callbackUrl: process.env.MPESA_CALLBACK_URL || 'https://e2393cac0435.ngrok-free.app/api/mpesa/callback',
-  timeoutUrl: process.env.MPESA_TIMEOUT_URL || 'https://e2393cac0435.ngrok-free.app/api/mpesa/timeout',
+  callbackUrl: process.env.MPESA_CALLBACK_URL || 'https://kasneb-app.vercel.app/api/mpesa/callback',
+  timeoutUrl: process.env.MPESA_TIMEOUT_URL || 'https://kasneb-app.vercel.app/api/mpesa/timeout',
 };
 
 // Test credentials (from successful request)
@@ -33,8 +33,8 @@ const TEST_CREDENTIALS = {
   businessShortCode: '174379',
   passkey: 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919',
   environment: 'sandbox',
-  callbackUrl: 'https://e2393cac0435.ngrok-free.app/api/mpesa/callback',
-  timeoutUrl: 'https://e2393cac0435.ngrok-free.app/api/mpesa/timeout',
+  callbackUrl: 'https://kasneb-app.vercel.app/api/mpesa/callback',
+  timeoutUrl: 'https://kasneb-app.vercel.app/api/mpesa/timeout',
 };
 
 // Validate M-Pesa configuration

@@ -9,6 +9,6 @@ const getDefaultBaseUrl = () => {
   return 'http://localhost:5000';
 };
 
-export const API_BASE_URL = 'https://e2393cac0435.ngrok-free.app';
+export const API_BASE_URL = 'https://kasneb-app.vercel.app';
 
 
