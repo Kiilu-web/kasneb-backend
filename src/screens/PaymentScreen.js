@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
-  TouchableOpacity,
   ActivityIndicator,
   Alert,
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Card, Button, Text, Container } from '../components/ui';
 import { API_BASE_URL } from '../config/api';
+import theme from '../config/theme';
 
 const PaymentScreen = ({ navigation, route }) => {
   const { cartItems, totalAmount, phoneNumber } = route.params;
@@ -109,33 +109,39 @@ const PaymentScreen = ({ navigation, route }) => {
     switch (paymentStatus) {
       case 'processing':
         return (
-          <View style={styles.statusContainer}>
-            <ActivityIndicator size="large" color="#007AFF" />
-            <Text style={styles.statusText}>Processing M-Pesa Payment...</Text>
-            <Text style={styles.statusSubtext}>
+          <Container style={styles.statusContainer}>
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+            <Text variant="h4" color="textPrimary" style={styles.statusText}>
+              Processing M-Pesa Payment...
+            </Text>
+            <Text variant="body" color="textSecondary" style={styles.statusSubtext}>
               Please check your phone for the M-Pesa prompt
             </Text>
-          </View>
+          </Container>
         );
       case 'success':
         return (
-          <View style={styles.statusContainer}>
+          <Container style={styles.statusContainer}>
             <Text style={styles.successIcon}>✅</Text>
-            <Text style={styles.statusText}>Payment Successful!</Text>
-            <Text style={styles.statusSubtext}>
+            <Text variant="h4" color="textPrimary" style={styles.statusText}>
+              Payment Successful!
+            </Text>
+            <Text variant="body" color="textSecondary" style={styles.statusSubtext}>
               Redirecting to receipt...
             </Text>
-          </View>
+          </Container>
         );
       case 'failed':
         return (
-          <View style={styles.statusContainer}>
+          <Container style={styles.statusContainer}>
             <Text style={styles.failedIcon}>❌</Text>
-            <Text style={styles.statusText}>Payment Failed</Text>
-            <Text style={styles.statusSubtext}>
+            <Text variant="h4" color="textPrimary" style={styles.statusText}>
+              Payment Failed
+            </Text>
+            <Text variant="body" color="textSecondary" style={styles.statusSubtext}>
               Please try again or contact support
             </Text>
-          </View>
+          </Container>
         );
       default:
         return null;
@@ -147,24 +153,32 @@ const PaymentScreen = ({ navigation, route }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>M-Pesa Payment</Text>
-          <Text style={styles.headerSubtitle}>Complete your purchase securely</Text>
+          <Text variant="h2" color="textInverse" style={styles.headerTitle}>
+            M-Pesa Payment
+          </Text>
+          <Text variant="bodyLarge" color="textInverse" style={styles.headerSubtitle}>
+            Complete your purchase securely
+          </Text>
         </View>
 
         {paymentStatus === 'pending' && (
           <>
             {/* Order Summary */}
-            <View style={styles.summaryContainer}>
-              <Text style={styles.summaryTitle}>Order Summary</Text>
+            <Card style={styles.summaryContainer}>
+              <Text variant="h4" color="textPrimary" style={styles.summaryTitle}>
+                Order Summary
+              </Text>
               {cartItems.map((item, index) => (
                 <View key={index} style={styles.orderItem}>
                   <View style={styles.orderItemInfo}>
-                    <Text style={styles.orderItemTitle}>{item.title}</Text>
-                    <Text style={styles.orderItemMeta}>
+                    <Text variant="h6" color="textPrimary" style={styles.orderItemTitle}>
+                      {item.title}
+                    </Text>
+                    <Text variant="caption" color="textSecondary" style={styles.orderItemMeta}>
                       {item.subject} • {item.level}
                     </Text>
                   </View>
-                  <Text style={styles.orderItemPrice}>
+                  <Text variant="price" color="primary" style={styles.orderItemPrice}>
                     KES {item.price * item.quantity}
                   </Text>
                 </View>
@@ -173,80 +187,107 @@ const PaymentScreen = ({ navigation, route }) => {
               <View style={styles.orderDivider} />
               
               <View style={styles.orderTotal}>
-                <Text style={styles.orderTotalLabel}>Total Amount:</Text>
-                <Text style={styles.orderTotalValue}>KES {totalAmount}</Text>
+                <Text variant="h5" color="textPrimary" style={styles.orderTotalLabel}>
+                  Total Amount:
+                </Text>
+                <Text variant="priceLarge" color="primary" style={styles.orderTotalValue}>
+                  KES {totalAmount}
+                </Text>
               </View>
-            </View>
+            </Card>
 
             {/* Payment Details */}
-            <View style={styles.paymentContainer}>
-              <Text style={styles.paymentTitle}>Payment Details</Text>
+            <Card style={styles.paymentContainer}>
+              <Text variant="h4" color="textPrimary" style={styles.paymentTitle}>
+                Payment Details
+              </Text>
               
               <View style={styles.paymentRow}>
-                <Text style={styles.paymentLabel}>Phone Number:</Text>
-                <Text style={styles.paymentValue}>{formatPhoneNumber(phoneNumber)}</Text>
+                <Text variant="body" color="textSecondary" style={styles.paymentLabel}>
+                  Phone Number:
+                </Text>
+                <Text variant="body" color="textPrimary" style={styles.paymentValue}>
+                  {formatPhoneNumber(phoneNumber)}
+                </Text>
               </View>
               
               <View style={styles.paymentRow}>
-                <Text style={styles.paymentLabel}>Payment Method:</Text>
-                <Text style={styles.paymentValue}>M-Pesa</Text>
+                <Text variant="body" color="textSecondary" style={styles.paymentLabel}>
+                  Payment Method:
+                </Text>
+                <Text variant="body" color="textPrimary" style={styles.paymentValue}>
+                  M-Pesa
+                </Text>
               </View>
               
               <View style={styles.paymentRow}>
-                <Text style={styles.paymentLabel}>Processing Fee:</Text>
-                <Text style={styles.paymentValue}>KES 0</Text>
+                <Text variant="body" color="textSecondary" style={styles.paymentLabel}>
+                  Processing Fee:
+                </Text>
+                <Text variant="body" color="textPrimary" style={styles.paymentValue}>
+                  KES 0
+                </Text>
               </View>
-            </View>
+            </Card>
 
             {/* M-Pesa Instructions */}
-            <View style={styles.instructionsContainer}>
-              <Text style={styles.instructionsTitle}>How it works:</Text>
+            <Card style={styles.instructionsContainer}>
+              <Text variant="h4" color="textPrimary" style={styles.instructionsTitle}>
+                How it works:
+              </Text>
               <View style={styles.instructionItem}>
-                <Text style={styles.instructionNumber}>1</Text>
-                <Text style={styles.instructionText}>
+                <View style={styles.instructionNumber}>
+                  <Text variant="button" color="textInverse">1</Text>
+                </View>
+                <Text variant="body" color="textPrimary" style={styles.instructionText}>
                   Tap "Pay with M-Pesa" below
                 </Text>
               </View>
               <View style={styles.instructionItem}>
-                <Text style={styles.instructionNumber}>2</Text>
-                <Text style={styles.instructionText}>
+                <View style={styles.instructionNumber}>
+                  <Text variant="button" color="textInverse">2</Text>
+                </View>
+                <Text variant="body" color="textPrimary" style={styles.instructionText}>
                   You'll receive an M-Pesa prompt on your phone
                 </Text>
               </View>
               <View style={styles.instructionItem}>
-                <Text style={styles.instructionNumber}>3</Text>
-                <Text style={styles.instructionText}>
+                <View style={styles.instructionNumber}>
+                  <Text variant="button" color="textInverse">3</Text>
+                </View>
+                <Text variant="body" color="textPrimary" style={styles.instructionText}>
                   Enter your M-Pesa PIN to complete payment
                 </Text>
               </View>
               <View style={styles.instructionItem}>
-                <Text style={styles.instructionNumber}>4</Text>
-                <Text style={styles.instructionText}>
+                <View style={styles.instructionNumber}>
+                  <Text variant="button" color="textInverse">4</Text>
+                </View>
+                <Text variant="body" color="textPrimary" style={styles.instructionText}>
                   Download your study materials instantly
                 </Text>
               </View>
-            </View>
+            </Card>
 
             {/* Pay Button */}
-            <View style={styles.payContainer}>
-              <TouchableOpacity
-                style={[styles.payButton, loading && styles.payButtonDisabled]}
+            <Container style={styles.payContainer}>
+              <Button
+                title={loading ? 'Processing...' : `Pay KES ${totalAmount} with M-Pesa`}
                 onPress={initiatePayment}
                 disabled={loading}
-              >
-                <Text style={styles.payButtonText}>
-                  {loading ? 'Processing...' : `Pay KES ${totalAmount} with M-Pesa`}
-                </Text>
-              </TouchableOpacity>
+                loading={loading}
+                style={styles.payButton}
+                size="large"
+              />
               
-              <TouchableOpacity
-                style={styles.cancelButton}
+              <Button
+                title="Cancel"
                 onPress={() => navigation.goBack()}
                 disabled={loading}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+                variant="outline"
+                style={styles.cancelButton}
+              />
+            </Container>
           </>
         )}
 
@@ -260,71 +301,49 @@ const PaymentScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.background,
   },
   header: {
-    backgroundColor: '#007AFF',
-    padding: 20,
-    paddingTop: 40,
+    backgroundColor: theme.colors.primary,
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.xxxl,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
     textAlign: 'center',
+    marginBottom: theme.spacing.xs,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: 'white',
     textAlign: 'center',
-    marginTop: 5,
     opacity: 0.9,
   },
   summaryContainer: {
-    backgroundColor: 'white',
-    margin: 15,
-    padding: 20,
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    margin: theme.spacing.md,
   },
   summaryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
   },
   orderItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
   },
   orderItemInfo: {
     flex: 1,
   },
   orderItemTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 2,
+    marginBottom: theme.spacing.xs,
   },
   orderItemMeta: {
-    fontSize: 12,
-    color: '#666',
+    // Styling handled by Text component
   },
   orderItemPrice: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#007AFF',
+    // Styling handled by Text component
   },
   orderDivider: {
     height: 1,
-    backgroundColor: '#f0f0f0',
-    marginVertical: 15,
+    backgroundColor: theme.colors.gray,
+    marginVertical: theme.spacing.md,
   },
   orderTotal: {
     flexDirection: 'row',
@@ -332,134 +351,81 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   orderTotalLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    // Styling handled by Text component
   },
   orderTotalValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#007AFF',
+    // Styling handled by Text component
   },
   paymentContainer: {
-    backgroundColor: 'white',
-    margin: 15,
-    padding: 20,
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    margin: theme.spacing.md,
   },
   paymentTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
   },
   paymentRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: theme.spacing.sm,
   },
   paymentLabel: {
-    fontSize: 14,
-    color: '#666',
+    // Styling handled by Text component
   },
   paymentValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
+    // Styling handled by Text component
   },
   instructionsContainer: {
-    backgroundColor: 'white',
-    margin: 15,
-    padding: 20,
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    margin: theme.spacing.md,
   },
   instructionsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
   },
   instructionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
   },
   instructionNumber: {
-    backgroundColor: '#007AFF',
-    color: 'white',
-    width: 25,
-    height: 25,
-    borderRadius: 12.5,
-    textAlign: 'center',
-    lineHeight: 25,
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginRight: 15,
+    backgroundColor: theme.colors.primary,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: theme.spacing.md,
   },
   instructionText: {
-    fontSize: 14,
-    color: '#333',
     flex: 1,
   },
   payContainer: {
-    padding: 15,
+    padding: theme.spacing.md,
   },
   payButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  payButtonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  payButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginBottom: theme.spacing.sm,
   },
   cancelButton: {
-    padding: 15,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    color: '#666',
-    fontSize: 16,
+    // Styling handled by Button component
   },
   statusContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    padding: theme.spacing.xxxl,
   },
   statusText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: theme.spacing.lg,
+    marginBottom: theme.spacing.sm,
+    textAlign: 'center',
   },
   statusSubtext: {
-    fontSize: 16,
-    color: '#666',
     textAlign: 'center',
   },
   successIcon: {
-    fontSize: 60,
+    fontSize: 64,
+    marginBottom: theme.spacing.lg,
   },
   failedIcon: {
-    fontSize: 60,
+    fontSize: 64,
+    marginBottom: theme.spacing.lg,
   },
 });
 

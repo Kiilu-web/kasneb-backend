@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
   SafeAreaView,
   ActivityIndicator,
   Dimensions,
@@ -13,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { getFirestore, collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
+import { Card, Button, Text, Container } from '../components/ui';
 import theme from '../config/theme';
 
 const db = getFirestore();
@@ -112,10 +111,12 @@ const HomeScreen = ({ navigation }) => {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
+        <Container style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <Text variant="h5" color="textSecondary" style={styles.loadingText}>
+            Loading...
+          </Text>
+        </Container>
       </SafeAreaView>
     );
   }
@@ -130,33 +131,53 @@ const HomeScreen = ({ navigation }) => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>KASNEB MATERIALS</Text>
-          <Text style={styles.headerSubtitle}>Your gateway to professional success</Text>
+          <Text variant="h1" color="textInverse" style={styles.headerTitle}>
+            KASNEB MATERIALS
+          </Text>
+          <Text variant="bodyLarge" color="textInverse" style={styles.headerSubtitle}>
+            Your gateway to professional success
+          </Text>
           <View style={styles.headerStats}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{featuredMaterials.length}</Text>
-              <Text style={styles.statLabel}>Materials</Text>
+              <Text variant="h3" color="textInverse" style={styles.statNumber}>
+                {featuredMaterials.length}
+              </Text>
+              <Text variant="caption" color="textInverse" style={styles.statLabel}>
+                Materials
+              </Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{subjects.length}</Text>
-              <Text style={styles.statLabel}>Programs</Text>
+              <Text variant="h3" color="textInverse" style={styles.statNumber}>
+                {subjects.length}
+              </Text>
+              <Text variant="caption" color="textInverse" style={styles.statLabel}>
+                Programs
+              </Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>24/7</Text>
-              <Text style={styles.statLabel}>Access</Text>
+              <Text variant="h3" color="textInverse" style={styles.statNumber}>
+                24/7
+              </Text>
+              <Text variant="caption" color="textInverse" style={styles.statLabel}>
+                Access
+              </Text>
             </View>
           </View>
         </View>
 
         {/* Quick Actions */}
-        <View style={styles.quickActions}>
+        <Card style={styles.quickActions}>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => navigation.navigate('Materials')}
           >
             <Text style={styles.actionIcon}>📚</Text>
-            <Text style={styles.actionText}>Browse Materials</Text>
-            <Text style={styles.actionSubtext}>Find study materials</Text>
+            <Text variant="h6" color="textPrimary" style={styles.actionText}>
+              Browse Materials
+            </Text>
+            <Text variant="caption" color="textSecondary" style={styles.actionSubtext}>
+              Find study materials
+            </Text>
           </TouchableOpacity>
           
           <TouchableOpacity
@@ -164,8 +185,12 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('Cart')}
           >
             <Text style={styles.actionIcon}>🛒</Text>
-            <Text style={styles.actionText}>View Cart</Text>
-            <Text style={styles.actionSubtext}>Checkout items</Text>
+            <Text variant="h6" color="textPrimary" style={styles.actionText}>
+              View Cart
+            </Text>
+            <Text variant="caption" color="textSecondary" style={styles.actionSubtext}>
+              Checkout items
+            </Text>
           </TouchableOpacity>
           
           <TouchableOpacity
@@ -173,14 +198,20 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => Alert.alert('Coming Soon', 'Study planner feature will be available soon!')}
           >
             <Text style={styles.actionIcon}>📅</Text>
-            <Text style={styles.actionText}>Study Planner</Text>
-            <Text style={styles.actionSubtext}>Plan your studies</Text>
+            <Text variant="h6" color="textPrimary" style={styles.actionText}>
+              Study Planner
+            </Text>
+            <Text variant="caption" color="textSecondary" style={styles.actionSubtext}>
+              Plan your studies
+            </Text>
           </TouchableOpacity>
-        </View>
+        </Card>
 
         {/* Subjects */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Study Programs</Text>
+        <Container style={styles.section}>
+          <Text variant="h3" color="textPrimary" style={styles.sectionTitle}>
+            Study Programs
+          </Text>
           <View style={styles.subjectsContainer}>
             {subjects.map((subject, index) => (
               <TouchableOpacity
@@ -188,99 +219,128 @@ const HomeScreen = ({ navigation }) => {
                 style={styles.subjectCard}
                 onPress={() => navigation.navigate('Materials', { subject })}
               >
-                <Text style={styles.subjectTitle}>{subject}</Text>
-                <Text style={styles.subjectDescription}>
+                <Text variant="h5" color="textPrimary" style={styles.subjectTitle}>
+                  {subject}
+                </Text>
+                <Text variant="bodySmall" color="textSecondary" style={styles.subjectDescription}>
                   {getSubjectDescription(subject)}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
-        </View>
+        </Container>
 
         {/* Featured Materials */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Latest Materials</Text>
+        <Container style={styles.section}>
+          <Text variant="h3" color="textPrimary" style={styles.sectionTitle}>
+            Latest Materials
+          </Text>
           {featuredMaterials.length === 0 ? (
-            <View style={styles.emptyState}>
+            <Card style={styles.emptyState}>
               <Text style={styles.emptyStateIcon}>📚</Text>
-              <Text style={styles.emptyStateText}>No materials available yet</Text>
-              <Text style={styles.emptyStateSubtext}>Check back soon for new study materials</Text>
-            </View>
+              <Text variant="h5" color="textPrimary" style={styles.emptyStateText}>
+                No materials available yet
+              </Text>
+              <Text variant="body" color="textSecondary" style={styles.emptyStateSubtext}>
+                Check back soon for new study materials
+              </Text>
+            </Card>
           ) : (
             featuredMaterials.map((material) => (
-              <TouchableOpacity
-                key={material.id}
-                style={styles.materialCard}
-                onPress={() => navigation.navigate('Materials', { material })}
-              >
-                <View style={styles.materialInfo}>
-                  <Text style={styles.materialTitle} numberOfLines={2}>
-                    {material.title}
-                  </Text>
-                  <Text style={styles.materialDescription} numberOfLines={2}>
-                    {material.description}
-                  </Text>
-                  <View style={styles.materialMeta}>
-                    <Text style={styles.materialSubject}>
-                      {material.subject} - {material.level}
+              <Card key={material.id} style={styles.materialCard}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Materials', { material })}
+                >
+                  <View style={styles.materialInfo}>
+                    <Text variant="h5" color="textPrimary" style={styles.materialTitle} numberOfLines={2}>
+                      {material.title}
                     </Text>
-                    {material.year && (
-                      <Text style={styles.materialYear}>Year: {material.year}</Text>
-                    )}
+                    <Text variant="body" color="textSecondary" style={styles.materialDescription} numberOfLines={2}>
+                      {material.description}
+                    </Text>
+                    <View style={styles.materialMeta}>
+                      <Text variant="label" color="primary" style={styles.materialSubject}>
+                        {material.subject} - {material.level}
+                      </Text>
+                      {material.year && (
+                        <Text variant="caption" color="textMuted" style={styles.materialYear}>
+                          Year: {material.year}
+                        </Text>
+                      )}
+                    </View>
                   </View>
-                </View>
-                <View style={styles.materialPrice}>
-                  <Text style={styles.priceText}>{formatCurrency(material.price)}</Text>
-                </View>
-              </TouchableOpacity>
+                  <View style={styles.materialPrice}>
+                    <Text variant="price" color="primary" style={styles.priceText}>
+                      {formatCurrency(material.price)}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </Card>
             ))
           )}
-        </View>
+        </Container>
 
         {/* Benefits */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Why Choose Our Materials?</Text>
-          <View style={styles.benefitsContainer}>
+        <Container style={styles.section}>
+          <Text variant="h3" color="textPrimary" style={styles.sectionTitle}>
+            Why Choose Our Materials?
+          </Text>
+          <Card style={styles.benefitsContainer}>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>✅</Text>
-              <Text style={styles.benefitText}>Official KASNEB Past Papers</Text>
+              <Text variant="body" color="textPrimary" style={styles.benefitText}>
+                Official KASNEB Past Papers
+              </Text>
             </View>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>✅</Text>
-              <Text style={styles.benefitText}>Instant Download After Payment</Text>
+              <Text variant="body" color="textPrimary" style={styles.benefitText}>
+                Instant Download After Payment
+              </Text>
             </View>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>✅</Text>
-              <Text style={styles.benefitText}>Secure M-Pesa Payment</Text>
+              <Text variant="body" color="textPrimary" style={styles.benefitText}>
+                Secure M-Pesa Payment
+              </Text>
             </View>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>✅</Text>
-              <Text style={styles.benefitText}>24/7 Access to Materials</Text>
+              <Text variant="body" color="textPrimary" style={styles.benefitText}>
+                24/7 Access to Materials
+              </Text>
             </View>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>✅</Text>
-              <Text style={styles.benefitText}>Mobile-Friendly Interface</Text>
+              <Text variant="body" color="textPrimary" style={styles.benefitText}>
+                Mobile-Friendly Interface
+              </Text>
             </View>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>✅</Text>
-              <Text style={styles.benefitText}>Regular Updates & New Content</Text>
+              <Text variant="body" color="textPrimary" style={styles.benefitText}>
+                Regular Updates & New Content
+              </Text>
             </View>
-          </View>
-        </View>
+          </Card>
+        </Container>
 
         {/* Contact Support */}
-        <View style={styles.section}>
-          <View style={styles.supportCard}>
-            <Text style={styles.supportTitle}>Need Help?</Text>
-            <Text style={styles.supportText}>Our support team is here to help you succeed</Text>
-            <TouchableOpacity
-              style={styles.supportButton}
+        <Container style={styles.section}>
+          <Card style={styles.supportCard}>
+            <Text variant="h4" color="textPrimary" style={styles.supportTitle}>
+              Need Help?
+            </Text>
+            <Text variant="body" color="textSecondary" style={styles.supportText}>
+              Our support team is here to help you succeed
+            </Text>
+            <Button
+              title="Contact Support"
               onPress={() => Alert.alert('Contact Support', 'Email: support@kasneb.com\nPhone: +254 794483321')}
-            >
-              <Text style={styles.supportButtonText}>Contact Support</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+              style={styles.supportButton}
+            />
+          </Card>
+        </Container>
       </ScrollView>
     </SafeAreaView>
   );
@@ -293,28 +353,22 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: theme.colors.primary,
-    padding: isSmallDevice ? 15 : isLargeDevice ? 30 : 20,
-    paddingTop: isSmallDevice ? 30 : isLargeDevice ? 50 : 40,
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.xxxl,
   },
   headerTitle: {
-    fontSize: isSmallDevice ? 26 : isLargeDevice ? 36 : 30,
-    fontWeight: '900',
-    color: theme.colors.textInverse,
     textAlign: 'center',
-    marginBottom: 5,
+    marginBottom: theme.spacing.xs,
   },
   headerSubtitle: {
-    fontSize: isSmallDevice ? 16 : isLargeDevice ? 20 : 18,
-    fontWeight: '600',
-    color: theme.colors.textInverse,
     textAlign: 'center',
     opacity: 0.9,
   },
   headerStats: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 20,
-    paddingTop: 20,
+    marginTop: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.2)',
   },
@@ -322,55 +376,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: isSmallDevice ? 24 : isLargeDevice ? 28 : 26,
-    fontWeight: '800',
-    color: theme.colors.textInverse,
+    marginBottom: theme.spacing.xs,
   },
   statLabel: {
-    fontSize: isSmallDevice ? 14 : isLargeDevice ? 16 : 15,
-    fontWeight: '600',
-    color: theme.colors.textInverse,
     opacity: 0.8,
   },
   quickActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: isSmallDevice ? 15 : isLargeDevice ? 25 : 20,
-    backgroundColor: theme.colors.surface,
-    margin: isSmallDevice ? 10 : isLargeDevice ? 20 : 15,
-    borderRadius: theme.borderRadius.lg,
-    ...theme.shadows.md,
+    padding: theme.spacing.lg,
+    margin: theme.spacing.md,
   },
   actionButton: {
     alignItems: 'center',
     flex: 1,
-    padding: isSmallDevice ? 15 : isLargeDevice ? 20 : 18,
+    padding: theme.spacing.md,
   },
   actionIcon: {
-    fontSize: isSmallDevice ? 30 : isLargeDevice ? 40 : 35,
-    marginBottom: isSmallDevice ? 8 : isLargeDevice ? 12 : 10,
+    fontSize: 32,
+    marginBottom: theme.spacing.sm,
   },
   actionText: {
-    fontSize: isSmallDevice ? 16 : isLargeDevice ? 18 : 17,
-    fontWeight: '700',
-    color: theme.colors.textPrimary,
     textAlign: 'center',
+    marginBottom: theme.spacing.xs,
   },
   actionSubtext: {
-    fontSize: isSmallDevice ? 13 : isLargeDevice ? 14 : 13,
-    fontWeight: '600',
-    color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginTop: 2,
   },
   section: {
-    padding: isSmallDevice ? 15 : isLargeDevice ? 25 : 20,
+    padding: theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: isSmallDevice ? 22 : isLargeDevice ? 28 : 24,
-    fontWeight: '800',
-    color: theme.colors.textPrimary,
-    marginBottom: isSmallDevice ? 15 : isLargeDevice ? 20 : 18,
+    marginBottom: theme.spacing.lg,
   },
   subjectsContainer: {
     flexDirection: 'row',
@@ -378,169 +415,104 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   subjectCard: {
-    backgroundColor: theme.colors.surface,
-    padding: isSmallDevice ? 15 : isLargeDevice ? 20 : 18,
+    padding: theme.spacing.lg,
     borderRadius: theme.borderRadius.lg,
-    width: isSmallDevice ? '48%' : isLargeDevice ? '23%' : '48%',
-    marginBottom: isSmallDevice ? 10 : isLargeDevice ? 15 : 12,
+    width: '48%',
+    marginBottom: theme.spacing.md,
     alignItems: 'center',
+    backgroundColor: theme.colors.surface,
     ...theme.shadows.sm,
   },
   subjectTitle: {
-    fontSize: isSmallDevice ? 18 : isLargeDevice ? 20 : 19,
-    fontWeight: '800',
-    color: theme.colors.textPrimary,
-    marginBottom: isSmallDevice ? 5 : isLargeDevice ? 8 : 6,
+    marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
   subjectDescription: {
-    fontSize: isSmallDevice ? 13 : isLargeDevice ? 15 : 14,
-    fontWeight: '600',
-    color: theme.colors.textSecondary,
     textAlign: 'center',
-    lineHeight: isSmallDevice ? 16 : isLargeDevice ? 18 : 17,
   },
   materialCard: {
-    backgroundColor: theme.colors.surface,
-    padding: isSmallDevice ? 15 : isLargeDevice ? 20 : 18,
-    borderRadius: theme.borderRadius.lg,
-    marginBottom: isSmallDevice ? 10 : isLargeDevice ? 15 : 12,
+    marginBottom: theme.spacing.md,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    ...theme.shadows.sm,
   },
   materialInfo: {
     flex: 1,
-    marginRight: isSmallDevice ? 10 : isLargeDevice ? 15 : 12,
+    marginRight: theme.spacing.md,
   },
   materialTitle: {
-    fontSize: isSmallDevice ? 18 : isLargeDevice ? 20 : 19,
-    fontWeight: '800',
-    color: theme.colors.textPrimary,
-    marginBottom: isSmallDevice ? 4 : isLargeDevice ? 6 : 5,
-    lineHeight: isSmallDevice ? 22 : isLargeDevice ? 24 : 23,
+    marginBottom: theme.spacing.xs,
   },
   materialDescription: {
-    fontSize: isSmallDevice ? 15 : isLargeDevice ? 16 : 15,
-    fontWeight: '600',
-    color: theme.colors.textSecondary,
-    marginBottom: isSmallDevice ? 6 : isLargeDevice ? 8 : 7,
-    lineHeight: isSmallDevice ? 18 : isLargeDevice ? 20 : 19,
+    marginBottom: theme.spacing.sm,
   },
   materialMeta: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   materialSubject: {
-    fontSize: isSmallDevice ? 13 : isLargeDevice ? 14 : 13,
-    color: theme.colors.primary,
-    fontWeight: '700',
+    marginRight: theme.spacing.sm,
   },
   materialYear: {
-    fontSize: isSmallDevice ? 13 : isLargeDevice ? 14 : 13,
-    fontWeight: '600',
-    color: theme.colors.textSecondary,
-    marginLeft: 5,
+    marginLeft: theme.spacing.sm,
   },
   materialPrice: {
     alignItems: 'flex-end',
   },
   priceText: {
-    fontSize: isSmallDevice ? 18 : isLargeDevice ? 20 : 19,
-    fontWeight: '800',
-    color: theme.colors.primary,
+    // Price styling handled by Text component
   },
   benefitsContainer: {
-    backgroundColor: theme.colors.surface,
-    padding: 20,
-    borderRadius: theme.borderRadius.lg,
-    ...theme.shadows.sm,
+    padding: theme.spacing.lg,
   },
   benefitItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
   },
   benefitIcon: {
     fontSize: 20,
-    marginRight: 10,
+    marginRight: theme.spacing.sm,
   },
   benefitText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.colors.textPrimary,
     flex: 1,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
   },
   loadingText: {
-    marginTop: 10,
-    fontSize: isSmallDevice ? 18 : isLargeDevice ? 20 : 19,
-    color: theme.colors.textSecondary,
-    fontWeight: '600',
+    marginTop: theme.spacing.sm,
   },
   emptyState: {
     alignItems: 'center',
-    padding: isSmallDevice ? 20 : isLargeDevice ? 30 : 25,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.lg,
-    marginTop: 15,
-    ...theme.shadows.sm,
+    padding: theme.spacing.xl,
+    marginTop: theme.spacing.md,
   },
   emptyStateIcon: {
-    fontSize: isSmallDevice ? 40 : isLargeDevice ? 60 : 50,
-    marginBottom: isSmallDevice ? 10 : isLargeDevice ? 15 : 12,
+    fontSize: 48,
+    marginBottom: theme.spacing.md,
   },
   emptyStateText: {
-    fontSize: isSmallDevice ? 18 : isLargeDevice ? 20 : 19,
-    fontWeight: '800',
-    color: theme.colors.textPrimary,
-    marginBottom: isSmallDevice ? 5 : isLargeDevice ? 8 : 6,
+    marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
   emptyStateSubtext: {
-    fontSize: isSmallDevice ? 15 : isLargeDevice ? 16 : 15,
-    fontWeight: '600',
-    color: theme.colors.textSecondary,
     textAlign: 'center',
-    lineHeight: isSmallDevice ? 18 : isLargeDevice ? 20 : 19,
   },
   supportCard: {
-    backgroundColor: theme.colors.surface,
-    padding: 20,
-    borderRadius: theme.borderRadius.lg,
     alignItems: 'center',
-    ...theme.shadows.sm,
   },
   supportTitle: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: theme.colors.textPrimary,
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   supportText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 22,
+    marginBottom: theme.spacing.lg,
   },
   supportButton: {
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: theme.borderRadius.md,
-  },
-  supportButtonText: {
-    color: theme.colors.textInverse,
-    fontSize: 18,
-    fontWeight: '700',
+    // Button styling handled by Button component
   },
 });
 
