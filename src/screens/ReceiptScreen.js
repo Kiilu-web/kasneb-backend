@@ -215,7 +215,7 @@ const ReceiptScreen = ({ navigation, route }) => {
           
           <TouchableOpacity
             style={styles.homeButton}
-            onPress={() => navigation.navigate('Home')}
+            onPress={() => navigation.navigate('UserTabs')}
           >
             <Text style={styles.homeButtonText}>🏠 Back to Home</Text>
           </TouchableOpacity>
