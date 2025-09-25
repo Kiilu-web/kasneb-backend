@@ -113,6 +113,37 @@ const ProfileScreen = ({ navigation }) => {
     });
   };
 
+  const testApiConnection = async () => {
+    try {
+      console.log('🔍 Testing API connection to:', API_BASE_URL);
+      
+      const response = await fetch(`${API_BASE_URL}/api/mpesa/test-purchases`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', response.headers);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('❌ Error response:', errorText);
+        Alert.alert('API Test Failed', `Status: ${response.status}\nError: ${errorText.substring(0, 200)}...`);
+        return;
+      }
+
+      const data = await response.json();
+      console.log('✅ API connection successful:', data);
+      Alert.alert('API Test Success', `Found ${data.count} purchases in database`);
+      
+    } catch (error) {
+      console.error('Error testing API connection:', error);
+      Alert.alert('API Test Error', 'Failed to connect to API: ' + error.message);
+    }
+  };
+
   const createTestPurchase = async () => {
     try {
       const user = auth.currentUser;
@@ -133,8 +164,13 @@ const ProfileScreen = ({ navigation }) => {
         }),
       });
 
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', response.headers);
+      
       if (!response.ok) {
-        throw new Error('Failed to create test purchase');
+        const errorText = await response.text();
+        console.log('❌ Error response:', errorText);
+        throw new Error(`Failed to create test purchase: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
@@ -374,6 +410,12 @@ const ProfileScreen = ({ navigation }) => {
                 onPress={createTestPurchase}
                 style={styles.testButton}
                 variant="outline"
+              />
+              <Button
+                title="🔍 Test API Connection"
+                onPress={testApiConnection}
+                style={styles.testButton}
+                variant="secondary"
               />
             </View>
           ) : (
