@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
@@ -9,11 +8,15 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Alert,
+  Dimensions,
 } from 'react-native';
- 
+import { Card, Button, Text, Container } from '../components/ui';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import theme from '../config/theme';
+
+const { width } = Dimensions.get('window');
+const cardWidth = (width - 45) / 2; // 45 = padding + margins
 
 const MaterialsScreen = ({ navigation, route }) => {
   const [materials, setMaterials] = useState([]);
@@ -85,40 +88,60 @@ const MaterialsScreen = ({ navigation, route }) => {
   
 
   const renderMaterialItem = ({ item }) => (
-    <View style={styles.materialCard}>
-      <View style={styles.materialHeader}>
-        <Text style={styles.materialTitle}>{item.title}</Text>
-        <Text style={styles.materialPrice}>KES {item.price}</Text>
-      </View>
-      
-      <Text style={styles.materialDescription}>{item.description}</Text>
-      
-      <View style={styles.materialMeta}>
-        <Text style={styles.materialSubject}>{item.subject}</Text>
-        <Text style={styles.materialLevel}>{item.level}</Text>
-        <Text style={styles.materialYear}>{item.year}</Text>
-      </View>
-      
-      {Boolean(item.pages || item.fileSize) && (
-        <View style={styles.materialDetails}>
-          {item.pages ? (
-            <Text style={styles.materialDetail}>📄 {item.pages} pages</Text>
-          ) : null}
-          {item.fileSize ? (
-            <Text style={styles.materialDetail}>📁 {item.fileSize}</Text>
-          ) : null}
+    <Card style={[styles.materialCard, { width: cardWidth }]}>
+      <View style={styles.materialContent}>
+        <View style={styles.materialHeader}>
+          <Text variant="h6" color="textPrimary" style={styles.materialTitle} numberOfLines={2}>
+            {item.title}
+          </Text>
+          <Text variant="price" color="primary" style={styles.materialPrice}>
+            KES {item.price}
+          </Text>
         </View>
-      )}
-      
-      <View style={styles.materialActions}>
-        <TouchableOpacity
-          style={styles.addToCartButton}
-          onPress={() => addToCart(item)}
-        >
-          <Text style={styles.addToCartButtonText}>🛒 Add to Cart</Text>
-        </TouchableOpacity>
+        
+        <Text variant="bodySmall" color="textSecondary" style={styles.materialDescription} numberOfLines={3}>
+          {item.description}
+        </Text>
+        
+        <View style={styles.materialMeta}>
+          <Text variant="caption" color="primary" style={styles.materialSubject}>
+            {item.subject}
+          </Text>
+          <Text variant="caption" color="secondary" style={styles.materialLevel}>
+            {item.level}
+          </Text>
+          {item.year && (
+            <Text variant="caption" color="accent" style={styles.materialYear}>
+              {item.year}
+            </Text>
+          )}
+        </View>
+        
+        {Boolean(item.pages || item.fileSize) && (
+          <View style={styles.materialDetails}>
+            {item.pages ? (
+              <Text variant="caption" color="textMuted" style={styles.materialDetail}>
+                📄 {item.pages} pages
+              </Text>
+            ) : null}
+            {item.fileSize ? (
+              <Text variant="caption" color="textMuted" style={styles.materialDetail}>
+                📁 {item.fileSize}
+              </Text>
+            ) : null}
+          </View>
+        )}
+        
+        <View style={styles.materialActions}>
+          <Button
+            title="🛒 Add to Cart"
+            onPress={() => addToCart(item)}
+            size="small"
+            style={styles.addToCartButton}
+          />
+        </View>
       </View>
-    </View>
+    </Card>
   );
 
   const renderFilterButton = (title, value, onPress) => (
@@ -140,10 +163,12 @@ const MaterialsScreen = ({ navigation, route }) => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Loading materials...</Text>
-      </View>
+      <Container style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text variant="h5" color="textSecondary" style={styles.loadingText}>
+          Loading materials...
+        </Text>
+      </Container>
     );
   }
 
@@ -151,10 +176,16 @@ const MaterialsScreen = ({ navigation, route }) => {
     <SafeAreaView style={styles.container}>
               {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Study Materials</Text>
-          <Text style={styles.headerSubtitle}>Browse and purchase KASNEB materials</Text>
+          <Text variant="h2" color="textInverse" style={styles.headerTitle}>
+            Study Materials
+          </Text>
+          <Text variant="bodyLarge" color="textInverse" style={styles.headerSubtitle}>
+            Browse and purchase KASNEB materials
+          </Text>
           <View style={styles.headerStats}>
-            <Text style={styles.statText}>{filteredMaterials.length} materials available</Text>
+            <Text variant="caption" color="textInverse" style={styles.statText}>
+              {filteredMaterials.length} materials available
+            </Text>
           </View>
         </View>
 
@@ -169,8 +200,10 @@ const MaterialsScreen = ({ navigation, route }) => {
       </View>
 
       {/* Filters */}
-      <View style={styles.filtersContainer}>
-        <Text style={styles.filtersTitle}>Filter by Subject:</Text>
+      <Container style={styles.filtersContainer}>
+        <Text variant="h5" color="textPrimary" style={styles.filtersTitle}>
+          Filter by Subject:
+        </Text>
         <View style={styles.filtersRow}>
           {subjects.map((subject) => (
             <View key={subject} style={styles.filterButtonContainer}>
@@ -183,7 +216,9 @@ const MaterialsScreen = ({ navigation, route }) => {
           ))}
         </View>
         
-        <Text style={styles.filtersTitle}>Filter by Level:</Text>
+        <Text variant="h5" color="textPrimary" style={styles.filtersTitle}>
+          Filter by Level:
+        </Text>
         <View style={styles.filtersRow}>
           {levels.map((level) => (
             <View key={level} style={styles.filterButtonContainer}>
@@ -195,28 +230,31 @@ const MaterialsScreen = ({ navigation, route }) => {
             </View>
           ))}
         </View>
-      </View>
+      </Container>
 
       {/* Results Count */}
-      <View style={styles.resultsContainer}>
-        <Text style={styles.resultsText}>
+      <Container style={styles.resultsContainer}>
+        <Text variant="body" color="textSecondary" style={styles.resultsText}>
           {filteredMaterials.length} material{filteredMaterials.length !== 1 ? 's' : ''} found
         </Text>
-        <TouchableOpacity
-          style={styles.sortButton}
+        <Button
+          title="Sort"
           onPress={() => Alert.alert('Sort Options', 'Sort by: Price, Date, Title')}
-        >
-          <Text style={styles.sortButtonText}>Sort</Text>
-        </TouchableOpacity>
-      </View>
+          size="small"
+          variant="secondary"
+          style={styles.sortButton}
+        />
+      </Container>
 
       {/* Materials List */}
       <FlatList
         data={filteredMaterials}
         renderItem={renderMaterialItem}
         keyExtractor={(item) => item.id}
+        numColumns={2}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
+        columnWrapperStyle={styles.row}
       />
     </SafeAreaView>
   );
@@ -233,72 +271,59 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#666',
+    marginTop: theme.spacing.sm,
   },
   header: {
     backgroundColor: theme.colors.primary,
-    padding: 20,
-    paddingTop: 40,
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.xxxl,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.colors.textInverse,
     textAlign: 'center',
+    marginBottom: theme.spacing.xs,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: theme.colors.textInverse,
     textAlign: 'center',
-    marginTop: 5,
     opacity: 0.9,
   },
   headerStats: {
-    marginTop: 10,
+    marginTop: theme.spacing.sm,
     alignItems: 'center',
   },
   statText: {
-    fontSize: 14,
-    color: theme.colors.textInverse,
     opacity: 0.8,
   },
   searchContainer: {
-    padding: 15,
+    padding: theme.spacing.md,
     backgroundColor: theme.colors.surface,
   },
   searchInput: {
     backgroundColor: theme.colors.lightGray,
-    padding: 15,
+    padding: theme.spacing.md,
     borderRadius: theme.borderRadius.lg,
     fontSize: 16,
   },
   filtersContainer: {
     backgroundColor: theme.colors.surface,
-    padding: 15,
-    marginBottom: 10,
+    marginBottom: theme.spacing.sm,
   },
   filtersTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: theme.colors.textPrimary,
-    marginBottom: 10,
-    marginTop: 10,
+    marginBottom: theme.spacing.sm,
+    marginTop: theme.spacing.sm,
   },
   filtersRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 10,
+    marginBottom: theme.spacing.sm,
   },
   filterButtonContainer: {
-    marginRight: 10,
-    marginBottom: 5,
+    marginRight: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   filterButton: {
     backgroundColor: theme.colors.lightGray,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     borderRadius: theme.borderRadius.full,
   },
   filterButtonActive: {
@@ -312,119 +337,79 @@ const styles = StyleSheet.create({
     color: theme.colors.textInverse,
   },
   resultsContainer: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   resultsText: {
-    fontSize: 14,
-    color: theme.colors.textSecondary,
+    // Styling handled by Text component
   },
   sortButton: {
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: theme.borderRadius.md,
-  },
-  sortButtonText: {
-    color: theme.colors.textInverse,
-    fontSize: 12,
-    fontWeight: '600',
+    // Styling handled by Button component
   },
   listContainer: {
-    padding: 15,
+    padding: theme.spacing.md,
+  },
+  row: {
+    justifyContent: 'space-between',
   },
   materialCard: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    marginBottom: theme.spacing.md,
+  },
+  materialContent: {
+    flex: 1,
   },
   materialHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: theme.spacing.sm,
   },
   materialTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    flex: 1,
+    marginBottom: theme.spacing.xs,
   },
   materialPrice: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#007AFF',
+    // Styling handled by Text component
   },
   materialDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 10,
-    lineHeight: 20,
+    marginBottom: theme.spacing.sm,
   },
   materialMeta: {
-    flexDirection: 'row',
-    marginBottom: 10,
+    flexDirection: 'column',
+    marginBottom: theme.spacing.sm,
   },
   materialSubject: {
-    fontSize: 12,
-    color: '#007AFF',
-    backgroundColor: '#e3f2fd',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 10,
-    marginRight: 5,
+    backgroundColor: theme.colors.lightGray,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
+    marginBottom: theme.spacing.xs,
+    alignSelf: 'flex-start',
   },
   materialLevel: {
-    fontSize: 12,
-    color: '#4caf50',
-    backgroundColor: '#e8f5e8',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 10,
-    marginRight: 5,
+    backgroundColor: theme.colors.lightGray,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
+    marginBottom: theme.spacing.xs,
+    alignSelf: 'flex-start',
   },
   materialYear: {
-    fontSize: 12,
-    color: '#ff9800',
-    backgroundColor: '#fff3e0',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 10,
+    backgroundColor: theme.colors.lightGray,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
+    alignSelf: 'flex-start',
   },
   materialDetails: {
-    flexDirection: 'row',
-    marginBottom: 15,
+    flexDirection: 'column',
+    marginBottom: theme.spacing.sm,
   },
   materialDetail: {
-    fontSize: 12,
-    color: '#666',
-    marginRight: 15,
+    marginBottom: theme.spacing.xs,
   },
   materialActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    // Styling handled by Button component
   },
   addToCartButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 8,
-    flex: 1,
-    alignItems: 'center',
-  },
-  addToCartButtonText: {
-    fontSize: 14,
-    color: 'white',
-    fontWeight: '600',
+    // Styling handled by Button component
   },
 });
 
