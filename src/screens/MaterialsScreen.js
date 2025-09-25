@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import { Card, Button, Text, Container } from '../components/ui';
 import { collection, getDocs, query, where } from 'firebase/firestore';
