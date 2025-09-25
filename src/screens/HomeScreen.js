@@ -209,9 +209,6 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Subjects */}
         <Container style={styles.section}>
-          <Text variant="h3" color="textPrimary" style={styles.sectionTitle}>
-            Study Programs
-          </Text>
           <View style={styles.subjectsContainer}>
             {subjects.map((subject, index) => (
               <TouchableOpacity
@@ -232,9 +229,6 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Featured Materials */}
         <Container style={styles.section}>
-          <Text variant="h3" color="textPrimary" style={styles.sectionTitle}>
-            Latest Materials
-          </Text>
           {featuredMaterials.length === 0 ? (
             <Card style={styles.emptyState}>
               <Text style={styles.emptyStateIcon}>📚</Text>
@@ -285,9 +279,6 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Benefits */}
         <Container style={styles.section}>
-          <Text variant="h3" color="textPrimary" style={styles.sectionTitle}>
-            Why Choose Our Materials?
-          </Text>
           <Card style={styles.benefitsContainer}>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>✅</Text>
@@ -408,9 +399,6 @@ const styles = StyleSheet.create({
   },
   section: {
     padding: theme.spacing.lg,
-  },
-  sectionTitle: {
-    marginBottom: theme.spacing.lg,
   },
   subjectsContainer: {
     flexDirection: 'row',
