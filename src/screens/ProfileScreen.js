@@ -13,7 +13,6 @@ import {
 import { Card, Button, Text, Container } from '../components/ui';
 import { auth } from '../config/firebase';
 import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { API_BASE_URL } from '../config/api';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as WebBrowser from 'expo-web-browser';
 import { signOut } from 'firebase/auth';
@@ -113,79 +112,6 @@ const ProfileScreen = ({ navigation }) => {
     });
   };
 
-  const testApiConnection = async () => {
-    try {
-      console.log('🔍 Testing API connection to:', API_BASE_URL);
-      
-      const response = await fetch(`${API_BASE_URL}/api/mpesa/test-purchases`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log('📡 Response status:', response.status);
-      console.log('📡 Response headers:', response.headers);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log('❌ Error response:', errorText);
-        Alert.alert('API Test Failed', `Status: ${response.status}\nError: ${errorText.substring(0, 200)}...`);
-        return;
-      }
-
-      const data = await response.json();
-      console.log('✅ API connection successful:', data);
-      Alert.alert('API Test Success', `Found ${data.count} purchases in database`);
-      
-    } catch (error) {
-      console.error('Error testing API connection:', error);
-      Alert.alert('API Test Error', 'Failed to connect to API: ' + error.message);
-    }
-  };
-
-  const createTestPurchase = async () => {
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        Alert.alert('Error', 'No user logged in');
-        return;
-      }
-
-      console.log('🧪 Creating test purchase for user:', user.uid);
-      
-      const response = await fetch(`${API_BASE_URL}/api/mpesa/test-create-purchase`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.uid,
-        }),
-      });
-
-      console.log('📡 Response status:', response.status);
-      console.log('📡 Response headers:', response.headers);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log('❌ Error response:', errorText);
-        throw new Error(`Failed to create test purchase: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('✅ Test purchase created:', data);
-      
-      Alert.alert('Success', 'Test purchase created! Refreshing...');
-      
-      // Refresh purchases
-      await fetchPurchases();
-      
-    } catch (error) {
-      console.error('Error creating test purchase:', error);
-      Alert.alert('Error', 'Failed to create test purchase: ' + error.message);
-    }
-  };
 
   const formatFileSize = (bytes) => {
     if (!bytes) return 'Unknown size';
@@ -405,18 +331,6 @@ const ProfileScreen = ({ navigation }) => {
               <Text variant="body" color="textSecondary" style={styles.emptyStateSubtext}>
                 Your purchased materials will appear here
               </Text>
-              <Button
-                title="🧪 Create Test Purchase"
-                onPress={createTestPurchase}
-                style={styles.testButton}
-                variant="outline"
-              />
-              <Button
-                title="🔍 Test API Connection"
-                onPress={testApiConnection}
-                style={styles.testButton}
-                variant="secondary"
-              />
             </View>
           ) : (
             purchases.map((material) => (
@@ -736,10 +650,6 @@ const styles = StyleSheet.create({
   emptyStateSubtext: {
     textAlign: 'center',
     lineHeight: 20,
-  },
-  testButton: {
-    marginTop: theme.spacing.lg,
-    alignSelf: 'center',
   },
 });
 
