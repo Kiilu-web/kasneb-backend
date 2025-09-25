@@ -9,7 +9,7 @@ const getDefaultBaseUrl = () => {
   return 'http://localhost:5000';
 };
 
-// For testing: Use local backend when available, otherwise use Vercel
-export const API_BASE_URL = __DEV__ ? 'http://localhost:5000' : 'https://kasneb-quvna24vw-joseph-kiilus-projects.vercel.app';
+// Use deployed Vercel backend for all environments
+export const API_BASE_URL = 'https://kasneb-quvna24vw-joseph-kiilus-projects.vercel.app';
 
 
