@@ -9,6 +9,6 @@ const getDefaultBaseUrl = () => {
   return 'http://localhost:5000';
 };
 
-export const API_BASE_URL = 'https://kasneb-9kh1r5hiu-joseph-kiilus-projects.vercel.app';
+export const API_BASE_URL = 'https://kasneb-quvna24vw-joseph-kiilus-projects.vercel.app';
 
 
