@@ -56,12 +56,16 @@ const ProfileScreen = ({ navigation }) => {
   const fetchPurchases = async () => {
     try {
       const user = auth.currentUser;
+      console.log('🔍 Fetching purchases for user:', user?.uid);
+      
       if (user) {
         // Fetch purchases from the purchases collection
         const q = query(collection(db, 'purchases'), where('userId', '==', user.uid));
         const snapshot = await getDocs(q);
         const items = [];
         snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+        
+        console.log('📦 Found purchases:', items.length, items);
         
         // Sort purchases by date (newest first)
         items.sort((a, b) => {
@@ -71,6 +75,9 @@ const ProfileScreen = ({ navigation }) => {
         });
         
         setPurchases(items);
+        console.log('✅ Purchases set:', items.length);
+      } else {
+        console.log('❌ No user found');
       }
     } catch (error) {
       console.error('Error fetching purchases:', error);

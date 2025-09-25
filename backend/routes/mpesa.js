@@ -107,15 +107,15 @@ router.post('/stkpush', async (req, res) => {
     validateMpesaConfig();
     console.log('✅ M-Pesa configuration validated');
 
-    const { phoneNumber, amount, cartItems } = req.body;
-    console.log('📋 Extracted data:', { phoneNumber, amount, cartItemsCount: cartItems?.length });
+    const { phoneNumber, amount, cartItems, userId } = req.body;
+    console.log('📋 Extracted data:', { phoneNumber, amount, cartItemsCount: cartItems?.length, userId });
 
     // Validate input
-    if (!phoneNumber || !amount || !cartItems) {
+    if (!phoneNumber || !amount || !cartItems || !userId) {
       console.log('❌ Validation failed: Missing required fields');
       return res.status(400).json({
         error: 'Missing required fields',
-        message: 'Phone number, amount, and cart items are required'
+        message: 'Phone number, amount, cart items, and user ID are required'
       });
     }
     console.log('✅ Input validation passed');
@@ -182,6 +182,7 @@ router.post('/stkpush', async (req, res) => {
       phoneNumber: formattedPhone,
       amount: amount,
       cartItems: cartItems,
+      userId: userId,
       status: 'pending',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -303,18 +304,33 @@ router.post('/callback', async (req, res) => {
 
       await admin.firestore().collection('sales').add(salesData);
 
-      // Update user's purchased materials
-      const userPurchases = transactionData.cartItems.map(item => ({
-        materialId: item.id,
-        materialTitle: item.title,
-        purchaseDate: new Date(),
-        transactionId: transactionDoc.id,
-      }));
-
-      // Note: User purchase tracking would require userId from the original request
-      // For now, we'll just log the successful purchase
+      // Save individual purchases for user profile
       const cartItems = transactionData.cartItems || [];
       console.log('✅ Purchase completed for materials:', cartItems.map(item => item.title));
+
+      // Save each material as a separate purchase record
+      for (const item of cartItems) {
+        const purchaseData = {
+          userId: transactionData.userId,
+          materialId: item.id,
+          materialTitle: item.title,
+          subject: item.subject,
+          level: item.level,
+          year: item.year,
+          price: item.price,
+          amount: item.price,
+          downloadURL: item.downloadURL,
+          fileSize: item.fileSize,
+          pages: item.pages,
+          transactionId: transactionDoc.id,
+          mpesaReceiptNumber,
+          purchaseDate: new Date(),
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        };
+
+        await admin.firestore().collection('purchases').add(purchaseData);
+        console.log('📝 Saved purchase record for:', item.title);
+      }
 
       console.log('Payment completed successfully:', mpesaReceiptNumber);
 

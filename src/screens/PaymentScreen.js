@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Button, Text, Container } from '../components/ui';
 import { API_BASE_URL } from '../config/api';
+import { auth } from '../config/firebase';
 import theme from '../config/theme';
 
 const PaymentScreen = ({ navigation, route }) => {
@@ -32,6 +33,7 @@ const PaymentScreen = ({ navigation, route }) => {
           phoneNumber: phoneNumber,
           amount: totalAmount,
           cartItems: cartItems,
+          userId: auth.currentUser?.uid,
         }),
       });
       if (!response.ok) {
