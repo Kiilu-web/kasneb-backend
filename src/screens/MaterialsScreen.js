@@ -90,20 +90,20 @@ const MaterialsScreen = ({ navigation, route }) => {
   const renderMaterialItem = ({ item }) => (
     <Card style={[styles.materialCard, { width: cardWidth }]}>
       <View style={styles.materialContent}>
-        <View style={styles.materialHeader}>
+      <View style={styles.materialHeader}>
           <Text variant="h6" color="textPrimary" style={styles.materialTitle} numberOfLines={2}>
             {item.title}
           </Text>
           <Text variant="price" color="primary" style={styles.materialPrice}>
             KES {item.price}
           </Text>
-        </View>
-        
+      </View>
+      
         <Text variant="bodySmall" color="textSecondary" style={styles.materialDescription} numberOfLines={3}>
           {item.description}
         </Text>
-        
-        <View style={styles.materialMeta}>
+      
+      <View style={styles.materialMeta}>
           <Text variant="caption" color="primary" style={styles.materialSubject}>
             {item.subject}
           </Text>
@@ -115,29 +115,29 @@ const MaterialsScreen = ({ navigation, route }) => {
               {item.year}
             </Text>
           )}
-        </View>
-        
-        {Boolean(item.pages || item.fileSize) && (
-          <View style={styles.materialDetails}>
-            {item.pages ? (
+      </View>
+      
+      {Boolean(item.pages || item.fileSize) && (
+        <View style={styles.materialDetails}>
+          {item.pages ? (
               <Text variant="caption" color="textMuted" style={styles.materialDetail}>
                 📄 {item.pages} pages
               </Text>
-            ) : null}
-            {item.fileSize ? (
+          ) : null}
+          {item.fileSize ? (
               <Text variant="caption" color="textMuted" style={styles.materialDetail}>
                 📁 {item.fileSize}
               </Text>
-            ) : null}
-          </View>
-        )}
-        
-        <View style={styles.materialActions}>
+          ) : null}
+        </View>
+      )}
+      
+      <View style={styles.materialActions}>
           <Button
             title="🛒 Add to Cart"
             onPress={() => addToCart(item)}
             size="small"
-            style={styles.addToCartButton}
+          style={styles.addToCartButton}
           />
         </View>
       </View>
@@ -174,6 +174,10 @@ const MaterialsScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
+      >
               {/* Header */}
         <View style={styles.header}>
           <Text variant="h2" color="textInverse" style={styles.headerTitle}>
@@ -251,11 +255,13 @@ const MaterialsScreen = ({ navigation, route }) => {
         data={filteredMaterials}
         renderItem={renderMaterialItem}
         keyExtractor={(item) => item.id}
-        numColumns={2}
+          numColumns={2}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
-        columnWrapperStyle={styles.row}
+          columnWrapperStyle={styles.row}
+          scrollEnabled={false}
       />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -264,6 +270,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   loadingContainer: {
     flex: 1,
@@ -275,26 +284,22 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: theme.colors.primary,
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.xxxl,
-    paddingTop: theme.spacing.xxxl + 20,
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.xxxl,
   },
   headerTitle: {
     textAlign: 'center',
-    marginBottom: theme.spacing.sm,
-    textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    marginBottom: theme.spacing.xs,
   },
   headerSubtitle: {
     textAlign: 'center',
     opacity: 0.9,
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
   },
   headerStats: {
-    marginTop: theme.spacing.lg,
+    marginTop: theme.spacing.md,
     alignItems: 'center',
-    paddingTop: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.2)',
   },
@@ -302,69 +307,37 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   searchContainer: {
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.lg,
+    padding: theme.spacing.md,
     backgroundColor: theme.colors.surface,
-    marginTop: -theme.spacing.lg,
-    borderBottomLeftRadius: theme.borderRadius.xl,
-    borderBottomRightRadius: theme.borderRadius.xl,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   searchInput: {
-    backgroundColor: theme.colors.white,
-    padding: theme.spacing.lg,
-    borderRadius: theme.borderRadius.xl,
+    backgroundColor: theme.colors.lightGray,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: theme.colors.lightGray,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
   },
   filtersContainer: {
-    backgroundColor: theme.colors.white,
-    marginHorizontal: theme.spacing.lg,
-    marginBottom: theme.spacing.lg,
-    borderRadius: theme.borderRadius.xl,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    backgroundColor: theme.colors.surface,
+    marginBottom: theme.spacing.sm,
   },
   filtersTitle: {
-    marginBottom: theme.spacing.lg,
-    marginTop: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.lg,
+    marginBottom: theme.spacing.sm,
+    marginTop: theme.spacing.sm,
   },
   filtersRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.lg,
-  },
-  filterButtonContainer: {
-    marginRight: theme.spacing.md,
     marginBottom: theme.spacing.sm,
   },
+  filterButtonContainer: {
+    marginRight: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
+  },
   filterButton: {
-    backgroundColor: theme.colors.surface,
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
+    backgroundColor: theme.colors.lightGray,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     borderRadius: theme.borderRadius.full,
-    borderWidth: 1,
-    borderColor: theme.colors.lightGray,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
   },
   filterButtonActive: {
     backgroundColor: theme.colors.primary,
@@ -388,74 +361,67 @@ const styles = StyleSheet.create({
     // Styling handled by Button component
   },
   listContainer: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
+    padding: theme.spacing.md,
   },
   row: {
     justifyContent: 'space-between',
   },
   materialCard: {
-    marginBottom: theme.spacing.lg,
-    borderRadius: theme.borderRadius.xl,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: theme.colors.lightGray,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   materialContent: {
     flex: 1,
-    padding: theme.spacing.lg,
+    padding: theme.spacing.md,
   },
   materialHeader: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   materialTitle: {
-    marginBottom: theme.spacing.sm,
-    fontWeight: '600',
-    lineHeight: 22,
+    marginBottom: theme.spacing.xs,
+    fontSize: 14,
   },
   materialPrice: {
     // Styling handled by Text component
   },
   materialDescription: {
-    marginBottom: theme.spacing.md,
-    lineHeight: 18,
+    marginBottom: theme.spacing.sm,
+    fontSize: 12,
   },
   materialMeta: {
     flexDirection: 'column',
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   materialSubject: {
-    backgroundColor: theme.colors.primary + '15',
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.borderRadius.md,
-    marginBottom: theme.spacing.sm,
+    backgroundColor: theme.colors.lightGray,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
+    marginBottom: theme.spacing.xs,
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: theme.colors.primary + '30',
+    fontSize: 10,
   },
   materialLevel: {
-    backgroundColor: theme.colors.secondary + '15',
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.borderRadius.md,
-    marginBottom: theme.spacing.sm,
+    backgroundColor: theme.colors.lightGray,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
+    marginBottom: theme.spacing.xs,
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: theme.colors.secondary + '30',
+    fontSize: 10,
   },
   materialYear: {
-    backgroundColor: theme.colors.accent + '15',
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.lightGray,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: theme.colors.accent + '30',
+    fontSize: 10,
   },
   materialDetails: {
     flexDirection: 'column',
