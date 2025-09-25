@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
@@ -11,11 +10,13 @@ import {
   TextInput,
   RefreshControl,
 } from 'react-native';
+import { Card, Button, Text, Container } from '../components/ui';
 import { auth } from '../config/firebase';
 import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as WebBrowser from 'expo-web-browser';
 import { signOut } from 'firebase/auth';
+import theme from '../config/theme';
 
 const db = getFirestore();
 
@@ -182,10 +183,12 @@ const ProfileScreen = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={{ marginTop: 10 }}>Loading Profile...</Text>
-      </View>
+      <Container style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text variant="h5" color="textSecondary" style={styles.loadingText}>
+          Loading Profile...
+        </Text>
+      </Container>
     );
   }
 
@@ -205,8 +208,12 @@ const ProfileScreen = ({ navigation }) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
-            <Text style={styles.headerTitle}>Profile</Text>
-            <Text style={styles.headerSubtitle}>Manage your account</Text>
+            <Text variant="h2" color="textInverse" style={styles.headerTitle}>
+              Profile
+            </Text>
+            <Text variant="bodyLarge" color="textInverse" style={styles.headerSubtitle}>
+              Manage your account
+            </Text>
           </View>
           <TouchableOpacity
             style={styles.refreshButton}
@@ -218,10 +225,10 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         {/* Profile Info */}
-        <View style={styles.profileContainer}>
+        <Card style={styles.profileContainer}>
           <View style={styles.profileHeader}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
+              <Text variant="h3" color="textInverse" style={styles.avatarText}>
                 {userProfile?.email?.charAt(0).toUpperCase() || '?'}
               </Text>
             </View>
@@ -234,7 +241,9 @@ const ProfileScreen = ({ navigation }) => {
                     onChangeText={setEditName}
                     placeholder="Name"
                   />
-                  <Text style={styles.profileEmail}>{userProfile?.email}</Text>
+                  <Text variant="body" color="textSecondary" style={styles.profileEmail}>
+                    {userProfile?.email}
+                  </Text>
                   <TextInput
                     style={styles.input}
                     value={editPhone}
@@ -242,113 +251,139 @@ const ProfileScreen = ({ navigation }) => {
                     placeholder="Phone Number"
                     keyboardType="phone-pad"
                   />
-                  <TouchableOpacity
-                    style={styles.saveButton}
+                  <Button
+                    title={saving ? 'Saving...' : 'Save'}
                     onPress={handleSave}
                     disabled={saving}
-                  >
-                    <Text style={styles.saveButtonText}>{saving ? 'Saving...' : 'Save'}</Text>
-                  </TouchableOpacity>
+                    loading={saving}
+                    style={styles.saveButton}
+                  />
                 </>
               ) : (
                 <>
-                  <Text style={styles.profileName}>{userProfile?.name || 'User'}</Text>
-                  <Text style={styles.profileEmail}>{userProfile?.email}</Text>
-                  <Text style={styles.profilePhone}>{userProfile?.phone}</Text>
-                  <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-                    <Text style={styles.editButtonText}>Edit Profile</Text>
-                  </TouchableOpacity>
+                  <Text variant="h4" color="textPrimary" style={styles.profileName}>
+                    {userProfile?.name || 'User'}
+                  </Text>
+                  <Text variant="body" color="textSecondary" style={styles.profileEmail}>
+                    {userProfile?.email}
+                  </Text>
+                  <Text variant="body" color="textSecondary" style={styles.profilePhone}>
+                    {userProfile?.phone}
+                  </Text>
+                  <Button
+                    title="Edit Profile"
+                    onPress={handleEdit}
+                    variant="outline"
+                    style={styles.editButton}
+                  />
                 </>
               )}
             </View>
           </View>
-        </View>
+        </Card>
 
         {/* User Statistics */}
-        <View style={styles.statsContainer}>
-          <Text style={styles.sectionTitle}>My Statistics</Text>
+        <Card style={styles.statsContainer}>
+          <Text variant="h4" color="textPrimary" style={styles.sectionTitle}>
+            My Statistics
+          </Text>
           <View style={styles.statsGrid}>
             <View style={styles.statCard}>
               <Text style={styles.statIcon}>📚</Text>
-              <Text style={styles.statValue}>{purchases.length}</Text>
-              <Text style={styles.statLabel}>Total Purchases</Text>
+              <Text variant="h3" color="textPrimary" style={styles.statValue}>
+                {purchases.length}
+              </Text>
+              <Text variant="caption" color="textSecondary" style={styles.statLabel}>
+                Total Purchases
+              </Text>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statIcon}>💰</Text>
-              <Text style={styles.statValue}>
+              <Text variant="h3" color="textPrimary" style={styles.statValue}>
                 {formatCurrency(purchases.reduce((sum, purchase) => sum + (purchase.amount || purchase.price || 0), 0))}
               </Text>
-              <Text style={styles.statLabel}>Total Spent</Text>
+              <Text variant="caption" color="textSecondary" style={styles.statLabel}>
+                Total Spent
+              </Text>
             </View>
           </View>
-        </View>
+        </Card>
 
         {/* Purchased Materials */}
-        <View style={styles.purchasesContainer}>
-          <Text style={styles.sectionTitle}>My Purchased Materials</Text>
+        <Card style={styles.purchasesContainer}>
+          <Text variant="h4" color="textPrimary" style={styles.sectionTitle}>
+            My Purchased Materials
+          </Text>
           {purchases.length === 0 ? (
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateIcon}>📚</Text>
-              <Text style={styles.emptyStateText}>No purchases yet</Text>
-              <Text style={styles.emptyStateSubtext}>Your purchased materials will appear here</Text>
+              <Text variant="h5" color="textPrimary" style={styles.emptyStateText}>
+                No purchases yet
+              </Text>
+              <Text variant="body" color="textSecondary" style={styles.emptyStateSubtext}>
+                Your purchased materials will appear here
+              </Text>
             </View>
           ) : (
             purchases.map((material) => (
-              <View key={material.id} style={styles.purchaseItem}>
+              <Card key={material.id} style={styles.purchaseItem}>
                 <View style={styles.purchaseInfo}>
-                  <Text style={styles.purchaseTitle}>
+                  <Text variant="h6" color="textPrimary" style={styles.purchaseTitle}>
                     {material.materialTitle || material.title || 'Unknown Material'}
                   </Text>
-                  <Text style={styles.purchaseSubject}>
+                  <Text variant="caption" color="primary" style={styles.purchaseSubject}>
                     {material.subject && material.level ? `${material.subject} - ${material.level}` : 'Subject not specified'}
                   </Text>
                   {material.year && (
-                    <Text style={styles.purchaseYear}>Year: {material.year}</Text>
+                    <Text variant="caption" color="accent" style={styles.purchaseYear}>
+                      Year: {material.year}
+                    </Text>
                   )}
-                  <Text style={styles.purchaseDate}>
+                  <Text variant="caption" color="textMuted" style={styles.purchaseDate}>
                     Purchased: {formatDate(material.createdAt || material.purchaseDate)}
                   </Text>
                   {material.fileSize && (
-                    <Text style={styles.purchaseFileSize}>
+                    <Text variant="caption" color="textMuted" style={styles.purchaseFileSize}>
                       File size: {formatFileSize(material.fileSize)}
                     </Text>
                   )}
                 </View>
                 <View style={styles.purchaseActions}>
-                  <Text style={styles.purchaseAmount}>
+                  <Text variant="price" color="primary" style={styles.purchaseAmount}>
                     {formatCurrency(material.amount || material.price)}
                   </Text>
                   {material.downloadURL && (
-                    <TouchableOpacity
-                      style={styles.downloadButton}
+                    <Button
+                      title={downloading[material.id] ? '📥 Downloading...' : '📥 Download PDF'}
                       onPress={() => downloadMaterial(material)}
                       disabled={downloading[material.id]}
-                    >
-                      <Text style={styles.downloadButtonText}>
-                        {downloading[material.id] ? '📥 Downloading...' : '📥 Download PDF'}
-                      </Text>
-                    </TouchableOpacity>
+                      loading={downloading[material.id]}
+                      size="small"
+                      style={styles.downloadButton}
+                    />
                   )}
                 </View>
-              </View>
+              </Card>
             ))
           )}
-        </View>
+        </Card>
 
         {/* Logout Button */}
-        <View style={styles.logoutContainer}>
-          <TouchableOpacity
-            style={styles.logoutButton}
+        <Container style={styles.logoutContainer}>
+          <Button
+            title="🚪 Logout"
             onPress={handleLogout}
-          >
-            <Text style={styles.logoutButtonText}>🚪 Logout</Text>
-          </TouchableOpacity>
-        </View>
+            variant="secondary"
+            style={styles.logoutButton}
+          />
+        </Container>
 
         {/* App Version */}
-        <View style={styles.versionContainer}>
-          <Text style={styles.versionText}>KASNEB Study Materials v1.0.0</Text>
-        </View>
+        <Container style={styles.versionContainer}>
+          <Text variant="caption" color="textMuted" style={styles.versionText}>
+            KASNEB Study Materials v1.0.0
+          </Text>
+        </Container>
       </ScrollView>
     </SafeAreaView>
   );
@@ -357,12 +392,20 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: theme.spacing.sm,
   },
   header: {
-    backgroundColor: '#007AFF',
-    padding: 20,
-    paddingTop: 40,
+    backgroundColor: theme.colors.primary,
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.xxxl,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -371,35 +414,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
     textAlign: 'center',
+    marginBottom: theme.spacing.xs,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: 'white',
     textAlign: 'center',
-    marginTop: 5,
     opacity: 0.9,
   },
   refreshButton: {
-    padding: 10,
+    padding: theme.spacing.sm,
   },
   refreshButtonText: {
     fontSize: 24,
-    color: 'white',
+    color: theme.colors.textInverse,
   },
   profileContainer: {
-    backgroundColor: 'white',
-    margin: 15,
-    padding: 20,
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    margin: theme.spacing.md,
   },
   profileHeader: {
     flexDirection: 'row',
@@ -409,119 +439,75 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#007AFF',
+    backgroundColor: theme.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 15,
+    marginRight: theme.spacing.md,
   },
   avatarText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+    // Styling handled by Text component
   },
   profileInfo: {
     flex: 1,
   },
   profileName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 2,
+    marginBottom: theme.spacing.xs,
   },
   profileEmail: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 2,
+    marginBottom: theme.spacing.xs,
   },
   profilePhone: {
-    fontSize: 14,
-    color: '#666',
+    // Styling handled by Text component
   },
   statsContainer: {
-    backgroundColor: 'white',
-    margin: 15,
-    padding: 20,
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    margin: theme.spacing.md,
   },
   statsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 10,
+    marginTop: theme.spacing.sm,
   },
   statCard: {
     alignItems: 'center',
     flex: 1,
-    padding: 15,
+    padding: theme.spacing.md,
   },
   statIcon: {
     fontSize: 30,
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   statValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    marginBottom: theme.spacing.xs,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#666',
     textAlign: 'center',
   },
   purchasesContainer: {
-    backgroundColor: 'white',
-    margin: 15,
-    padding: 20,
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    margin: theme.spacing.md,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    marginBottom: theme.spacing.md,
   },
   purchaseItem: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    paddingVertical: 15,
+    marginBottom: theme.spacing.sm,
   },
   purchaseInfo: {
-    marginBottom: 10,
+    marginBottom: theme.spacing.sm,
   },
   purchaseTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 2,
+    marginBottom: theme.spacing.xs,
   },
   purchaseSubject: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 2,
+    marginBottom: theme.spacing.xs,
   },
   purchaseYear: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 2,
+    marginBottom: theme.spacing.xs,
   },
   purchaseDate: {
-    fontSize: 12,
-    color: '#666',
+    // Styling handled by Text component
   },
   purchaseFileSize: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 2,
+    marginTop: theme.spacing.xs,
   },
   purchaseActions: {
     flexDirection: 'row',
@@ -529,126 +515,52 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   purchaseAmount: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#007AFF',
+    // Styling handled by Text component
   },
   downloadButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-  },
-  downloadButtonText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  menuContainer: {
-    backgroundColor: 'white',
-    margin: 15,
-    borderRadius: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    fontSize: 20,
-    marginRight: 15,
-  },
-  menuTitle: {
-    fontSize: 16,
-    color: '#333',
-  },
-  menuArrow: {
-    fontSize: 18,
-    color: '#ccc',
+    // Styling handled by Button component
   },
   logoutContainer: {
-    padding: 15,
+    padding: theme.spacing.md,
   },
   logoutButton: {
-    backgroundColor: '#ff3b30',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  logoutButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    // Styling handled by Button component
   },
   versionContainer: {
     alignItems: 'center',
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   versionText: {
-    fontSize: 12,
-    color: '#999',
+    // Styling handled by Text component
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
+    borderColor: theme.colors.lightGray,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
     fontSize: 16,
+    backgroundColor: theme.colors.white,
   },
   saveButton: {
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    // Styling handled by Button component
   },
   editButton: {
-    backgroundColor: '#e0e0e0',
-    padding: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  editButtonText: {
-    color: '#333',
-    fontSize: 14,
-    fontWeight: '600',
+    // Styling handled by Button component
   },
   emptyState: {
     alignItems: 'center',
-    padding: 20,
-    marginTop: 20,
+    padding: theme.spacing.lg,
+    marginTop: theme.spacing.lg,
   },
   emptyStateIcon: {
     fontSize: 50,
-    marginBottom: 10,
+    marginBottom: theme.spacing.sm,
   },
   emptyStateText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+    marginBottom: theme.spacing.xs,
   },
   emptyStateSubtext: {
-    fontSize: 14,
-    color: '#666',
     textAlign: 'center',
   },
 });
