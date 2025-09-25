@@ -159,21 +159,29 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    console.log('🔍 App: Setting up auth listener...');
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('🔍 App: Auth state changed:', user ? `User: ${user.email}` : 'No user');
       setUser(user);
       // Check if user is admin - kiilu075@gmail.com is configured as admin
       if (user && user.email === 'kiilu075@gmail.com') {
         setIsAdmin(true);
+        console.log('🔍 App: User is admin');
       } else {
         setIsAdmin(false);
+        console.log('🔍 App: User is regular user');
       }
       setLoading(false);
+      console.log('🔍 App: Loading set to false');
     });
 
     return unsubscribe;
   }, []);
 
+  console.log('🔍 App: Render - loading:', loading, 'user:', user ? user.email : 'null', 'isAdmin:', isAdmin);
+
   if (loading) {
+    console.log('🔍 App: Showing loading screen');
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -182,6 +190,7 @@ export default function App() {
     );
   }
 
+  console.log('🔍 App: Rendering main navigation');
   return (
     <NavigationContainer>
       <StatusBar style="auto" />
