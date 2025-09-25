@@ -246,37 +246,40 @@ const HomeScreen = ({ navigation }) => {
               </Text>
             </Card>
           ) : (
-            featuredMaterials.map((material) => (
-              <Card key={material.id} style={styles.materialCard}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('Materials', { material })}
-                >
-                  <View style={styles.materialInfo}>
-                    <Text variant="h5" color="textPrimary" style={styles.materialTitle} numberOfLines={2}>
-                      {material.title}
-                    </Text>
-                    <Text variant="body" color="textSecondary" style={styles.materialDescription} numberOfLines={2}>
-                      {material.description}
-                    </Text>
-                    <View style={styles.materialMeta}>
-                      <Text variant="label" color="primary" style={styles.materialSubject}>
-                        {material.subject} - {material.level}
+            <View style={styles.materialsGrid}>
+              {featuredMaterials.map((material) => (
+                <Card key={material.id} style={styles.materialCard}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Materials', { material })}
+                    style={styles.materialCardContent}
+                  >
+                    <View style={styles.materialInfo}>
+                      <Text variant="h6" color="textPrimary" style={styles.materialTitle} numberOfLines={2}>
+                        {material.title}
                       </Text>
-                      {material.year && (
-                        <Text variant="caption" color="textMuted" style={styles.materialYear}>
-                          Year: {material.year}
+                      <Text variant="bodySmall" color="textSecondary" style={styles.materialDescription} numberOfLines={2}>
+                        {material.description}
+                      </Text>
+                      <View style={styles.materialMeta}>
+                        <Text variant="caption" color="primary" style={styles.materialSubject}>
+                          {material.subject} - {material.level}
                         </Text>
-                      )}
+                        {material.year && (
+                          <Text variant="caption" color="textMuted" style={styles.materialYear}>
+                            Year: {material.year}
+                          </Text>
+                        )}
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.materialPrice}>
-                    <Text variant="price" color="primary" style={styles.priceText}>
-                      {formatCurrency(material.price)}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </Card>
-            ))
+                    <View style={styles.materialPrice}>
+                      <Text variant="price" color="primary" style={styles.priceText}>
+                        {formatCurrency(material.price)}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </Card>
+              ))}
+            </View>
           )}
         </Container>
 
@@ -430,15 +433,20 @@ const styles = StyleSheet.create({
   subjectDescription: {
     textAlign: 'center',
   },
-  materialCard: {
-    marginBottom: theme.spacing.md,
+  materialsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    alignItems: 'center',
+  },
+  materialCard: {
+    width: '48%',
+    marginBottom: theme.spacing.md,
+  },
+  materialCardContent: {
+    flex: 1,
   },
   materialInfo: {
-    flex: 1,
-    marginRight: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   materialTitle: {
     marginBottom: theme.spacing.xs,
@@ -447,17 +455,17 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   materialMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   materialSubject: {
-    marginRight: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   materialYear: {
-    marginLeft: theme.spacing.sm,
+    // Styling handled by Text component
   },
   materialPrice: {
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
   },
   priceText: {
     // Price styling handled by Text component
