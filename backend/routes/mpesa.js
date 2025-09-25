@@ -353,6 +353,74 @@ router.post('/callback', async (req, res) => {
   }
 });
 
+// Test endpoint to check purchases
+router.get('/test-purchases', async (req, res) => {
+  try {
+    console.log('🔍 Testing purchases collection...');
+    
+    // Get all purchases
+    const purchasesRef = admin.firestore().collection('purchases');
+    const snapshot = await purchasesRef.get();
+    
+    const purchases = [];
+    snapshot.forEach(doc => {
+      purchases.push({ id: doc.id, ...doc.data() });
+    });
+    
+    console.log('📦 Found purchases:', purchases.length);
+    console.log('📋 Purchase details:', purchases);
+    
+    res.json({
+      success: true,
+      count: purchases.length,
+      purchases: purchases
+    });
+  } catch (error) {
+    console.error('Error testing purchases:', error);
+    res.status(500).json({ error: 'Failed to test purchases', details: error.message });
+  }
+});
+
+// Test endpoint to create a sample purchase
+router.post('/test-create-purchase', async (req, res) => {
+  try {
+    console.log('🧪 Creating test purchase...');
+    const { userId } = req.body;
+    
+    const testPurchase = {
+      userId: userId || 'test-user-123',
+      materialId: 'test-material-123',
+      materialTitle: 'Test CPA Foundation Material',
+      subject: 'CPA Foundation',
+      level: 'Foundation',
+      year: '2024',
+      price: 500,
+      amount: 500,
+      downloadURL: 'https://example.com/test-material.pdf',
+      fileSize: '2.5 MB',
+      pages: 150,
+      transactionId: 'test-transaction-123',
+      mpesaReceiptNumber: 'TEST123456',
+      purchaseDate: new Date(),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+    
+    const docRef = await admin.firestore().collection('purchases').add(testPurchase);
+    console.log('✅ Test purchase created with ID:', docRef.id);
+    console.log('👤 For user ID:', testPurchase.userId);
+    
+    res.json({
+      success: true,
+      message: 'Test purchase created successfully',
+      purchaseId: docRef.id,
+      purchase: testPurchase
+    });
+  } catch (error) {
+    console.error('Error creating test purchase:', error);
+    res.status(500).json({ error: 'Failed to create test purchase', details: error.message });
+  }
+});
+
 // Get transaction status
 router.get('/transaction/:checkoutRequestID', async (req, res) => {
   try {
