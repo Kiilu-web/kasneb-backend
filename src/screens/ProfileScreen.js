@@ -13,6 +13,7 @@ import {
 import { Card, Button, Text, Container } from '../components/ui';
 import { auth } from '../config/firebase';
 import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { API_BASE_URL } from '../config/api';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as WebBrowser from 'expo-web-browser';
 import { signOut } from 'firebase/auth';
@@ -110,6 +111,44 @@ const ProfileScreen = ({ navigation }) => {
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const createTestPurchase = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        Alert.alert('Error', 'No user logged in');
+        return;
+      }
+
+      console.log('🧪 Creating test purchase for user:', user.uid);
+      
+      const response = await fetch(`${API_BASE_URL}/api/mpesa/test-create-purchase`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.uid,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create test purchase');
+      }
+
+      const data = await response.json();
+      console.log('✅ Test purchase created:', data);
+      
+      Alert.alert('Success', 'Test purchase created! Refreshing...');
+      
+      // Refresh purchases
+      await fetchPurchases();
+      
+    } catch (error) {
+      console.error('Error creating test purchase:', error);
+      Alert.alert('Error', 'Failed to create test purchase: ' + error.message);
+    }
   };
 
   const formatFileSize = (bytes) => {
@@ -330,6 +369,12 @@ const ProfileScreen = ({ navigation }) => {
               <Text variant="body" color="textSecondary" style={styles.emptyStateSubtext}>
                 Your purchased materials will appear here
               </Text>
+              <Button
+                title="🧪 Create Test Purchase"
+                onPress={createTestPurchase}
+                style={styles.testButton}
+                variant="outline"
+              />
             </View>
           ) : (
             purchases.map((material) => (
@@ -649,6 +694,10 @@ const styles = StyleSheet.create({
   emptyStateSubtext: {
     textAlign: 'center',
     lineHeight: 20,
+  },
+  testButton: {
+    marginTop: theme.spacing.lg,
+    alignSelf: 'center',
   },
 });
 
